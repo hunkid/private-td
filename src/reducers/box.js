@@ -6,7 +6,9 @@ export default (state = [], action) => {
       let newState = [...state]
       newState.push({
         id: action.id,
-        isActive: false
+        name: action.name,
+        description: action.description,
+        isActive: action.isActive
       })
       return newState
     case types.CHANGE_ACTIVE:

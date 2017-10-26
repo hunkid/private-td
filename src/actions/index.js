@@ -7,10 +7,13 @@ export const changeActiveBox = (id) => {
   }
 }
 
-export const addBox = (id) => {
+export const addBox = (id, name, description, isActive) => {
   return {
     type: types.ADD_BOX,
-    id
+    id,
+    name,
+    description,
+    isActive
   }
 }
 

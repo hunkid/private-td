@@ -1,7 +1,11 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import Box from '../../components/Box'
-// import {connect}
+// import fetch from 'fetch'
+import axios from 'axios'
+
+import {BASEURL} from '../../constants/Config'
+import {connect} from 'react-redux'
 
 class BoxList extends Component {
   constructor (props) {
@@ -14,18 +18,45 @@ class BoxList extends Component {
   componentWillMount () {
     // 查询所有box
   }
+  componentDidMount () {
+    axios.get(`${BASEURL}/bbox/box`)
+      .then(function (res) {
+        console.log(res)
+      })
+  }
   _handleClick (e) {
     console.log(e)
     return false
   }
+  _handleBoxes (data) {
+    if (data) {
+
+    }
+  }
   render () {
-    return (
-      <div className="box-list">
-        <Box isActive={true} onClick={this._handleClick} />
-        <Box onClick={this._handleClick} id="#2"/>
-      </div>
-    )
+    let {boxes} = this.props
+    if (boxes) {
+      return (
+        <div className="box-list">
+          { boxes.map((box) => 
+            <Box id={box.id} func={box.description} isActive={box.isActive} key={box.id}/>) }
+        </div>
+      )
+    } else {
+      return null
+    }
+  }
+}
+BoxList.propTypes = {
+  boxes: PropTypes.arrayOf(PropTypes.object)
+}
+
+const mapStateToProps = (state) => {
+  return {
+    boxes: state.box
   }
 }
 
-export default BoxList
+export default connect(
+  mapStateToProps
+)(BoxList)
