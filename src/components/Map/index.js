@@ -6,6 +6,9 @@ import iconUrl from '../../assets/img/bus.png'
 
 var BMap = window.BMap
 const BMAP_STATUS_SUCCESS = window.BMAP_STATUS_SUCCESS
+// const BMAP_ANCHOR_TOP_LEFT = window.BMAP_ANCHOR_TOP_LEFT
+const BMAP_ANCHOR_TOP_RIGHT = window.BMAP_ANCHOR_TOP_RIGHT
+const BMAP_ANCHOR_BOTTOM_RIGHT = window.BMAP_ANCHOR_BOTTOM_RIGHT
 
 class Map extends Component {
   constructor(props) {
@@ -13,13 +16,21 @@ class Map extends Component {
     this._addLine = this._addLine.bind(this)
     this._addMarker = this._addMarker.bind(this)
     this._initMap = this._initMap.bind(this)
+    this._drawIcons = this._drawIcons.bind(this)
+    this._isInvalid = this._isInvalid.bind(this)
+    this.map = null
+    this.currentCor = {
+      lng: 0,
+      lat: 0
+    }
   }
+  /**
+   * Point(lng: Number, lat: Number)
+   */
   componentDidMount() {
-    var map = this._initMap(new BMap.Point(116.404, 39.915), 17)
-    var bounds = map.getBounds()
-    var lngSpan = bounds.getNorthEast().lng - bounds.getSouthWest().lng //经度跨域
-    var latSpan = bounds.getNorthEast().lat - bounds.getSouthWest().lat
-    var pts = [new BMap.Point(86.204, 39.915), new BMap.Point(116.404, 39.915)]
+    this.map = this._initMap(new BMap.Point(118.78, 32.04), 14)
+    // var bounds = this.map.getBounds()
+    // var pts = [new BMap.Point(118.722259, 32.022317), new BMap.Point(43.213, 41.121)]
     // for (var i = 0; i < 2; i++) {
     //   let point = new BMap.Point(
     //     bounds.getSouthWest().lng + lngSpan * (Math.random() * 0.7 + 0.15),
@@ -29,12 +40,53 @@ class Map extends Component {
     //   this._addMarker(point, map, iconUrl)
     // }
     // this._addLine(pts, map, '#8b95b8')
-    this._addMarker(pts[0], map, iconUrl)
-    this._addMarker(pts[1], map, iconUrl)
-    this._searchRoute(pts[0], pts[1], map, '#111')
+    // this._addMarker(pts[0], this.map, iconUrl)
+    // this._addMarker(pts[1], this.map, iconUrl)
+    // this._searchRoute(pts[0], pts[1], this.map, '#111')
+  }
+  // props改变，重新绘制
+  componentDidUpdate() {
+    this.map.clearOverlays()
+    this._drawIcons()
   }
   /**
-   *
+   * 根据props.coordinate画图标
+   */
+  _drawIcons () {
+    let pt
+    // console.log('1111')
+    if (!this.props.coordinate) {
+      alert('no')
+      return
+    } 
+    for (let i = 0; i < this.props.coordinate.length; i++) {
+      let coordinate = this.props.coordinate[i]
+      console.log('not yet')
+      if(this._isInvalid(coordinate) || 
+          (this.currentCor.lat === coordinate.latitude && 
+           this.currentCor.lng === coordinate.longitude)
+        ) {
+        continue
+      }
+      console.log('yes')
+      this.currentCor.lat = coordinate.latitude
+      this.currentCor.lng = coordinate.longitude
+      pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
+      this._addMarker(pt, this.map, iconUrl)
+    }
+  }
+  /**
+   * 如果是0,0，暂定为无效
+   * @param {Object} coordinate 
+   */
+  _isInvalid (coordinate) {
+    if ((+coordinate.latitude - 0) < Number.EPSILON &&
+        (+coordinate.longitude - 0) < Number.EPSILON) {
+      return true
+    }
+  }
+  /**
+   * 画两点间直线
    * @param {Array<Point>} points 地图点数组
    * @param {Map} map
    * @param {String} strokeColor RGB256
@@ -52,6 +104,7 @@ class Map extends Component {
    * @param {String} iconUrl
    */
   _addMarker(point, map, iconUrl) {
+    console.log('画')
     let icon = new BMap.Icon(`${iconUrl}`, new BMap.Size(30, 30), {
       imageSize: BMap.Size(31, 31)
     })
@@ -70,10 +123,14 @@ class Map extends Component {
     var map = new BMap.Map('bdMap') // 创建Map实例
     map.centerAndZoom(centerPoint, zoom) // 初始化地图,设置中心点坐标和地图级别
     //添加地图类型控件
-    map.setCurrentCity("北京") // 设置地图显示的城市 此项是必须设置的
+    map.setCurrentCity("南京") // 设置地图显示的城市 此项是必须设置的
     map.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
-    map.addControl(new BMap.NavigationControl())
-    map.addControl(new BMap.ScaleControl()) // 添加比例尺控件
+    let navCtl = new BMap.NavigationControl()
+    navCtl.setAnchor(BMAP_ANCHOR_TOP_RIGHT)
+    let scaleCtl = new BMap.ScaleControl()
+    scaleCtl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT)
+    map.addControl(scaleCtl) // 添加比例尺控件
+    map.addControl(navCtl)
     // map.addControl(new BMap.OverviewMapControl()) // 缩略地图控件
     return map
   }
@@ -101,15 +158,19 @@ class Map extends Component {
         }
       }
     })
-    drv.search('北京', '上海')
+    drv.search(start, end)
   }
   render() {
+    // console.log(this.props.coordinate)
     return ( 
       <div id = "bdMap"
-        style = {{width: '500px', height: '500px'}}>
+        style = {{width: '100%', height: '100%', position: 'absolute'}}>
       </div>
     )
   }
+}
+Map.propTypes = {
+  coordinate: PropTypes.array
 }
 
 export default Map

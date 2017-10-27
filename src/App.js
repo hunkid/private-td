@@ -1,24 +1,16 @@
-import React, {
-  Component
-} from 'react'
+import React, {Component} from 'react'
 import Header from './components/Header'
 import BoxList from './containers/BoxList'
-import Map from './components/Map'
+// import Map from './components/Map'
+import Map from './containers/Map'
+
 import './App.css'
-import {
-  Button
-} from 'antd'
+import {Button} from 'antd'
 import axios from 'axios'
 
-import {
-  BASEURL
-} from './constants/Config'
-import {
-  store
-} from './store'
-import {
-  addBox
-} from './actions'
+import {BASEURL} from './constants/Config'
+import {store} from './store'
+import {addBox} from './actions'
 class App extends Component {
   constructor(props) {
     super(props)
@@ -34,9 +26,9 @@ class App extends Component {
     if (!boxes || !boxes.length) {
       return
     }
-    store.dispatch(addBox(boxes[0].id, boxes[0].name, boxes[0].description, true))
+    store.dispatch(addBox(boxes[0].id, boxes[0].name, boxes[0].description, true, boxes[0].token))
     for (let i = 1; i < boxes.length; i++) {
-      store.dispatch(addBox(boxes[i].id, boxes[i].name, boxes[i].description, false))
+      store.dispatch(addBox(boxes[i].id, boxes[i].name, boxes[i].description, false, boxes[i].token))
     }
   }
   render() {

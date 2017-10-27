@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import Box from '../../components/Box'
-// import fetch from 'fetch'
-import axios from 'axios'
+// import Box from '../../components/Box'
+import Box from '../Box'
+// import axios from 'axios'
 
-import {BASEURL} from '../../constants/Config'
+// import {BASEURL} from '../../constants/Config'
 import {connect} from 'react-redux'
 
 class BoxList extends Component {
@@ -13,20 +13,16 @@ class BoxList extends Component {
     this.state = {
       boxes: []
     }
-    this._handleClick = this._handleClick.bind(this)
+    // this._handleClick = this._handleClick.bind(this)
   }
   componentWillMount () {
     // 查询所有box
   }
   componentDidMount () {
-    axios.get(`${BASEURL}/bbox/box`)
-      .then(function (res) {
-        console.log(res)
-      })
-  }
-  _handleClick (e) {
-    console.log(e)
-    return false
+    // axios.get(`${BASEURL}/bbox/box`)
+    //   .then(function (res) {
+    //     console.log(res)
+    //   })
   }
   _handleBoxes (data) {
     if (data) {

@@ -7,13 +7,14 @@ export const changeActiveBox = (id) => {
   }
 }
 
-export const addBox = (id, name, description, isActive) => {
+export const addBox = (id, name, description, isActive, token) => {
   return {
     type: types.ADD_BOX,
     id,
     name,
     description,
-    isActive
+    isActive,
+    token
   }
 }
 
@@ -21,5 +22,15 @@ export const removeBox = (id) => {
   return {
     type: types.REMOVE_BOX,
     id
+  }
+}
+
+// 这里需要注意到底需不需要total，如果不需要total，应该在dispatch之前来判断是否要叠加
+export const addHistory = (id, data, total) => {
+  return {
+    type: types.ADD_HISTROTY,
+    id,
+    data,
+    total
   }
 }

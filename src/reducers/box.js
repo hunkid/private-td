@@ -8,7 +8,8 @@ export default (state = [], action) => {
         id: action.id,
         name: action.name,
         description: action.description,
-        isActive: action.isActive
+        isActive: action.isActive,
+        token: action.token
       })
       return newState
     case types.CHANGE_ACTIVE:
@@ -16,7 +17,7 @@ export default (state = [], action) => {
       let id = action.id
       for (let i = 0; i < newState.length; i++) {
         newState[i]['isActive'] = false
-        if(id === newState[i][id]) {
+        if(id === newState[i]['id']) {
           newState[i]['isActive'] = true
         }
       }
