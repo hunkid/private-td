@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import Map from '../../components/Map'
 import { DatePicker } from 'antd'
 import moment from 'moment'
 import './mapContainer.css'
 import 'moment/locale/zh-cn'
 import {formDate} from '../../util'
 import {connect} from 'react-redux'
-
+import Map from '../../components/Map'
+import Chart from '../../components/Chart'
 
 moment.locale('zh-cn')
 
@@ -18,7 +18,6 @@ class MapContainer extends Component {
   }
   constructor(props) {
     super(props)
-    // formDate = formDate.bind(this)
     this._handleDtChange = this._handleDtChange.bind(this)
     this.state = {
       currentDay: ''
@@ -39,15 +38,17 @@ class MapContainer extends Component {
     let dateNow = formDate(Date.now())
     let activeId = this.props.activeBox.id
     let currentDay = this.state.currentDay
-    let coordinate = this.props.history[activeId] ? 
+    let data = this.props.history[activeId] ? 
       this.props.history[activeId][currentDay] :
-      null    
+      null
+    // console.log(data)
     return (
       <div className="map-container">
         <DatePicker defaultValue={moment(dateNow)} format='YYYY-MM-DD' size="large"
           allowClear={false} placeholder="按日期查询"
           className="dt-picker" onChange={this._handleDtChange} onOk={this._handleDtChange}/>
-        <Map coordinate={ coordinate }/>
+        <Map coordinate={ data } className="clearfix"/>
+        <Chart data={ data }/>
       </div>
     )
   }

@@ -18,11 +18,13 @@ class Map extends Component {
     this._initMap = this._initMap.bind(this)
     this._drawIcons = this._drawIcons.bind(this)
     this._isInvalid = this._isInvalid.bind(this)
+    this._drawRoute = this._drawRoute.bind(this)
     this.map = null
     this.currentCor = {
       lng: 0,
       lat: 0
     }
+    this.corArr = []
   }
   /**
    * Point(lng: Number, lat: Number)
@@ -54,29 +56,43 @@ class Map extends Component {
    */
   _drawIcons () {
     let pt
-    // console.log('1111')
     if (!this.props.coordinate) {
-      alert('no')
       return
     } 
+    this.corArr = [] //置空
     for (let i = 0; i < this.props.coordinate.length; i++) {
       let coordinate = this.props.coordinate[i]
-      console.log('not yet')
       if(this._isInvalid(coordinate) || 
           (this.currentCor.lat === coordinate.latitude && 
            this.currentCor.lng === coordinate.longitude)
         ) {
         continue
       }
-      console.log('yes')
       this.currentCor.lat = coordinate.latitude
       this.currentCor.lng = coordinate.longitude
       pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
       this._addMarker(pt, this.map, iconUrl)
+      this.corArr.push(pt)
+    }
+    if (this.corArr.length > 0) {
+      this._drawRoute()
     }
   }
   /**
-   * 如果是0,0，暂定为无效
+   * 根据坐标绘制路线，同时设定地图中心、缩放等
+   */
+  _drawRoute () {
+    // 返回视野
+    let view = this.map.getViewport(this.corArr)
+    // 设置中心点和zoom
+    this.map.setCenter(view.center)
+    this.map.setZoom(view.zoom)
+    for (let i = 1; i < this.corArr.length; i++) {
+      this._searchRoute(this.corArr[i - 1], this.corArr[i], this.map, '#111')
+    }
+  }
+  /**
+   * 坐标如果是0,0，暂定为无效
    * @param {Object} coordinate 
    */
   _isInvalid (coordinate) {
@@ -104,7 +120,6 @@ class Map extends Component {
    * @param {String} iconUrl
    */
   _addMarker(point, map, iconUrl) {
-    console.log('画')
     let icon = new BMap.Icon(`${iconUrl}`, new BMap.Size(30, 30), {
       imageSize: BMap.Size(31, 31)
     })
@@ -161,10 +176,9 @@ class Map extends Component {
     drv.search(start, end)
   }
   render() {
-    // console.log(this.props.coordinate)
-    return ( 
+    return (
       <div id = "bdMap"
-        style = {{width: '100%', height: '100%', position: 'absolute'}}>
+        style = {{width: '100%', height: '100%', position: 'relative'}}>
       </div>
     )
   }

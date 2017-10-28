@@ -1,5 +1,5 @@
 import * as types from '../constants/ActionTypes'
-import { formDate } from '../util'
+import { formDate, formTime, isCoordInvalid } from '../util'
 
 /**
  * @param {Object} action
@@ -39,13 +39,18 @@ export default (state = {}, action) => {
         let index = newState[action.id].total // todo
         for(; index < action.total; index++) {
           let m = action.data[index]
+          if (isCoordInvalid({latitude: m.latitude, longitude: m.longitude})) {
+            continue // 如果坐标无效，不记录
+          }
           let date = formDate(m.createAt)
+          let time = formTime(m.createAt)
           newState[action.id][date] = newState[action.id][date] || []
           newState[action.id][date].push({
             step: m.id,
             longitude: m.longitude,
             latitude: m.latitude,
-            temperature: m.temperature
+            temperature: m.temperature,
+            time: time
           })
         }
       }
