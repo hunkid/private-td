@@ -27,78 +27,101 @@ class Chart extends Component {
     this._loadData()
   }
   componentDidUpdate () {
+    console.log('aaa')
+    console.log(this.props.data)
     this._loadData()
   }
   _loadData () {
-    if (this.props.data instanceof Array) {      
+    if (this.props.data instanceof Array) { 
       this.temperatureArr = []
       this.timeArr = []
       this.props.data.forEach( (da) => {
-        this.temperatureArr.push([da.time, da.temperature]) //二维数组
-        // this.timeArr.push(da.time)
+        // this.temperatureArr.push([da.time, da.temperature]) //二维数组
+        this.temperatureArr.push(da.temperature)
+        this.timeArr.push(da.time)
       })
     }
+    console.log(this.timeArr)
     this._drawChart()
   }
   _initChart () {
     this.chart = echarts.init(document.getElementById('ct-container'))
-    // var myChart = echarts.init(document.getElementById('ct-container'));
-    // 绘制图表
   }
   _drawChart () {
     let opt = {
       chart: {
-        type: 'line'                          //指定图表的类型，默认是折线图（line）
+        type: 'line' //指定图表的类型，默认是折线图（line）
       },
       title: {
         text: '温度-时刻表' // 指定图表标题
-        // textStyle
       },
-      xAxis: {
-        type: 'time', //
-        splitLine: {
-          lineStyle: {
-              type: 'dashed'
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          animation: false,
+          label: {
+              backgroundColor: '#ccc',
+              borderColor: '#aaa',
+              borderWidth: 1,
+              shadowBlur: 0,
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              textStyle: {
+                  color: '#222'
+              }
           }
-        }
+        },
+      },
+      grid: [{
+        show: true,
+        left: 50,
+        right: 50
+      }],
+      xAxis: {
+        name: '时刻',
+        data: this.timeArr // todo，另设默认值
       },
       yAxis: {
-        type: 'value', //
+        name: '摄氏度',
         splitLine: {
-          lineStyle: {
-              type: 'dashed'
-          }
+            show: false
         }
       },
+      toolbox: {
+        left: 'center',
+        feature: {
+            dataZoom: {
+                yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+        }
+    },
       plotOptions: {
         series: {
-            allowPointSelect: true
+          allowPointSelect: true
         }
       },
       series: [{
-        name: '当日温度曲线', // 数据列名
+        name: '当前温度值', // 数据列名
         type: 'line',
-        data: this.temperatureArr                // 数据
+        data: this.temperatureArr, // 数据
+        markLine: {
+          silent: true,
+        }
       }]
     }
-    // this.chart.setOption({
-    //   title: { text: 'ECharts 入门示例' },
-    //   tooltip: {},
-    //   xAxis: {
-    //       data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-    //   },
-    //   yAxis: {},
-    //   series: [{
-    //       name: '销量',
-    //       type: 'bar',
-    //       data: [5, 20, 36, 10, 10, 20]
-    //   }]
-    // });
+    console.log('这里')
+    console.log(this.timeArr)
+    console.log(this.temperatureArr)
+    
     this.chart.setOption(opt)
     // console.log(this.temperatureArr)
     // console.log(this.timeArr)
     // this.chart.setOption(opt)
   }
+
   render () {
     return (
       <div id="ct-container" style={{'minWidth': "800px", 'height':"400px"}}></div>
