@@ -50,7 +50,9 @@ export default (state = {}, action) => {
             longitude: m.longitude,
             latitude: m.latitude,
             temperature: m.temperature,
-            time: time
+            time: time,
+            command: m.command,
+            deliverCargos:m.deliverCargos
           })
         }
       }

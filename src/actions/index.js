@@ -26,11 +26,13 @@ export const removeBox = (id) => {
 }
 
 // 这里需要注意到底需不需要total，如果不需要total，应该在dispatch之前来判断是否要叠加
-export const addHistory = (id, data, total) => {
+export const addHistory = (id, data, total, command, deliverCargos) => {
   return {
     type: types.ADD_HISTROTY,
     id,
     data,
-    total
+    total,
+    command,
+    deliverCargos
   }
 }

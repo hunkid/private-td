@@ -82,11 +82,6 @@ class Map extends Component {
    * 根据坐标绘制路线，同时设定地图中心、缩放等
    */
   _drawRoute () {
-    // 返回视野
-    let view = this.map.getViewport(this.corArr)
-    // 设置中心点和zoom
-    this.map.setCenter(view.center)
-    this.map.setZoom(view.zoom)
     for (let i = 1; i < this.corArr.length; i++) {
       this._searchRoute(this.corArr[i - 1], this.corArr[i], this.map, '#111')
     }
@@ -158,7 +153,7 @@ class Map extends Component {
    */
   _searchRoute(start, end, map, strokeColor) {
     var drv = new BMap.DrivingRoute(map, {
-      onSearchComplete: function (res) {
+      onSearchComplete: (res) => {
         if (drv.getStatus() === BMAP_STATUS_SUCCESS) {
           var plan = res.getPlan(0)
           var arrPois = []
@@ -169,7 +164,9 @@ class Map extends Component {
           map.addOverlay(new BMap.Polyline(arrPois, {
             strokeColor
           }))
-          map.setViewport(arrPois)
+          let view = this.map.getViewport(this.corArr)
+          this.map.setCenter(view.center)
+          this.map.setZoom(view.zoom)
         }
       }
     })

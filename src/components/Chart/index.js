@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-
+import { notification } from 'antd'
+import loadImg from '../../assets/icon/load.png'
 import 'echarts/lib/chart/line'
 // 引入柱状图
-require('echarts/lib/chart/bar');
+require('echarts/lib/chart/bar')
 // 引入提示框和标题组件
-require('echarts/lib/component/tooltip');
-require('echarts/lib/component/title');
+require('echarts/lib/component/tooltip')
+require('echarts/lib/component/title')
 var echarts = require('echarts/lib/echarts')
 
 class Chart extends Component {
@@ -20,7 +21,7 @@ class Chart extends Component {
     this._drawChart = this._drawChart.bind(this)
     this.temperatureArr = []
     this.timeArr = []
-    this.chart
+    this.chart = undefined
   }
   componentDidMount () {
     this._initChart()
@@ -35,7 +36,7 @@ class Chart extends Component {
     if (this.props.data instanceof Array) { 
       this.temperatureArr = []
       this.timeArr = []
-      this.props.data.forEach( (da) => {
+      this.props.data.forEach((da) => {
         // this.temperatureArr.push([da.time, da.temperature]) //二维数组
         this.temperatureArr.push(da.temperature)
         this.timeArr.push(da.time)
@@ -46,6 +47,16 @@ class Chart extends Component {
   }
   _initChart () {
     this.chart = echarts.init(document.getElementById('ct-container'))
+
+    this.chart.on('click', (params) => {
+      console.log(params) //params.dataIndex
+      console.log(this.props.data[params.dataIndex])
+      notification.open({ //todo
+        message: 'hi',
+        icon: <img src={loadImg} alt="icon" style={{width: '30px', height: '30px'}}/>,
+        duration: 1.5,
+      })
+    })
   }
   _drawChart () {
     let opt = {
@@ -97,7 +108,7 @@ class Chart extends Component {
             restore: {},
             saveAsImage: {}
         }
-    },
+      },
       plotOptions: {
         series: {
           allowPointSelect: true

@@ -36,7 +36,12 @@ class BoxContainer extends Component {
       .then((res) => {
         let data = res.data.history
         let total = res.data.total
-        store.dispatch(addHistory(id, data, total))
+        let deliverCargos = null, command
+        if (res.data.command === 'load' || res.data.command === 'unload') {
+          command = res.data.command
+          deliverCargos = res.data.deliverCargos
+        }
+        store.dispatch(addHistory(id, data, total, command, deliverCargos))
       })
   }
   render () {
