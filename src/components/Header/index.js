@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Row, Col, Icon, Button} from 'antd'
-import './header.css'
+// import './header.css'
 class Header  extends Component {
   static defaultProps = {
     number: 2,

@@ -3,7 +3,7 @@ import Header from './components/Header'
 import BoxList from './containers/BoxList'
 // import Map from './components/Map'
 import Map from './containers/ContentShow'
-
+import 'antd/dist/antd.css'
 import './App.css'
 import axios from 'axios'
 
