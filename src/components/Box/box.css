@@ -1,11 +1,9 @@
 .box-pn {
-  width: 30%;
-  min-width: 300px;
   border: 1px solid #eee;
   font-size: 18px;
   box-sizing: border-box;
   padding: 20px 0 18px 18px;
-  margin: 10px;
+  margin: 0 10px 50px;
 }
 .box-pn,
 .box-pn * {

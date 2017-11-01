@@ -2,10 +2,9 @@ import React, {Component} from 'react'
 import Header from './components/Header'
 import BoxList from './containers/BoxList'
 // import Map from './components/Map'
-import Map from './containers/Map'
+import Map from './containers/ContentShow'
 
 import './App.css'
-import {Button} from 'antd'
 import axios from 'axios'
 
 import {BASEURL} from './constants/Config'
@@ -37,7 +36,6 @@ class App extends Component {
         <Header />
         <BoxList />
         <Map />
-        <Button type = "primary" > Button </Button>
       </div>
     )
   }

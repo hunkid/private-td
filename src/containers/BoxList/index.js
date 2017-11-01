@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 // import Box from '../../components/Box'
 import Box from '../Box'
+import './boxList.css'
 // import axios from 'axios'
 
 // import {BASEURL} from '../../constants/Config'
