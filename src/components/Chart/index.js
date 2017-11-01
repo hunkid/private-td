@@ -1,8 +1,38 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import { notification } from 'antd'
-import loadImg from '../../assets/icon/load.png'
+import loadIcon from '../../assets/icon/load.png'
+import unloadIcon from '../../assets/icon/unload.png'
+import closeIcon from '../../assets/icon/close.png'
+import openIcon from '../../assets/icon/open.png'
+import transportIcon from '../../assets/icon/transport.png'
+import powerOn from '../../assets/icon/powerOn.png'
 import 'echarts/lib/chart/line'
+
+import * as iconTypes from '../../constants/Icon'
+
+let chooseIcon = {
+  [iconTypes.CLOSE]: {
+    src: closeIcon,
+    text: '已关闭'
+  },
+  [iconTypes.OPEN]: {
+    src: openIcon,
+    text: '已打开'
+  },
+  [iconTypes.LOAD]: {
+    src: loadIcon,
+    text: '已装载血液'
+  },
+  [iconTypes.UNLOAD]: {
+    src: unloadIcon,
+    text: '已卸载血液'
+  },
+  [iconTypes.OPEN]: {
+    src: transportIcon,
+    text: '在运输途中'
+  }
+}
 // 引入柱状图
 require('echarts/lib/chart/bar')
 // 引入提示框和标题组件
@@ -49,12 +79,16 @@ class Chart extends Component {
     this.chart = echarts.init(document.getElementById('ct-container'))
 
     this.chart.on('click', (params) => {
-      console.log(params) //params.dataIndex
+      // console.log(params) //params.dataIndex
+      let cmd = this.props.data[params.dataIndex].command
+      let src = chooseIcon[cmd]['src']
+      let text = chooseIcon[cmd]['text']
       console.log(this.props.data[params.dataIndex])
-      notification.open({ //todo
-        message: 'hi',
-        icon: <img src={loadImg} alt="icon" style={{width: '30px', height: '30px'}}/>,
+      notification.open({
+        message: text,
+        icon: <img src={src} alt="icon" style={{width: '30px', height: '30px'}}/>,
         duration: 1.5,
+        placement: 'rightBottm'
       })
     })
   }

@@ -3,6 +3,7 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import iconUrl from '../../assets/img/bus.png'
+import {GPS} from '../../util/transPos'
 
 var BMap = window.BMap
 const BMAP_STATUS_SUCCESS = window.BMAP_STATUS_SUCCESS
@@ -31,20 +32,6 @@ class Map extends Component {
    */
   componentDidMount() {
     this.map = this._initMap(new BMap.Point(118.78, 32.04), 14)
-    // var bounds = this.map.getBounds()
-    // var pts = [new BMap.Point(118.722259, 32.022317), new BMap.Point(43.213, 41.121)]
-    // for (var i = 0; i < 2; i++) {
-    //   let point = new BMap.Point(
-    //     bounds.getSouthWest().lng + lngSpan * (Math.random() * 0.7 + 0.15),
-    //     bounds.getSouthWest().lat + latSpan * (Math.random() * 0.7 + 0.15)
-    //   )
-    //   pts.push(point)
-    //   this._addMarker(point, map, iconUrl)
-    // }
-    // this._addLine(pts, map, '#8b95b8')
-    // this._addMarker(pts[0], this.map, iconUrl)
-    // this._addMarker(pts[1], this.map, iconUrl)
-    // this._searchRoute(pts[0], pts[1], this.map, '#111')
   }
   // props改变，重新绘制
   componentDidUpdate() {
@@ -70,6 +57,14 @@ class Map extends Component {
       }
       this.currentCor.lat = coordinate.latitude
       this.currentCor.lng = coordinate.longitude
+      console.log(coordinate.latitude, coordinate.longitude)
+      let tmp = GPS.gcj_encrypt(coordinate.latitude, coordinate.longitude)
+      console.log('tmp:')
+      console.log(tmp)
+      let tmp2 = GPS.bd_encrypt(tmp.lat, tmp.lon)
+      coordinate.longitude = tmp2.lon
+      coordinate.latitude = tmp2.lat
+      console.log(coordinate)
       pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
       this._addMarker(pt, this.map, iconUrl)
       this.corArr.push(pt)
@@ -82,6 +77,11 @@ class Map extends Component {
    * 根据坐标绘制路线，同时设定地图中心、缩放等
    */
   _drawRoute () {
+    // if (this.corArr && this.corArr.length > 1) {
+    //   let corArr = this.corArr.slice()
+    //   corArr.splice(1, corArr.length - 2)
+    //   this._searchRoute(this.corArr[0], this.corArr[corArr.length - 1], corArr, this.map, '#111')
+    // }
     for (let i = 1; i < this.corArr.length; i++) {
       this._searchRoute(this.corArr[i - 1], this.corArr[i], this.map, '#111')
     }

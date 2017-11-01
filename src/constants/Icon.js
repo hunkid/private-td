@@ -1,0 +1,6 @@
+export const CLOSE = 'close'
+export const UNLOAD = 'unload'
+export const LOAD = 'load'
+export const OPEN = 'open'
+export const POWERON = 'poweron'
+export const TRANSPORT = 'transport'
