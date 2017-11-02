@@ -20,11 +20,13 @@ class Map extends Component {
     this._drawIcons = this._drawIcons.bind(this)
     this._isInvalid = this._isInvalid.bind(this)
     this._drawRoute = this._drawRoute.bind(this)
+    // this._transPos = this._transPos.bind(this)
     this.map = null
     this.currentCor = {
       lng: 0,
       lat: 0
     }
+    this.coordinate = []
     this.corArr = []
   }
   /**
@@ -37,15 +39,20 @@ class Map extends Component {
   componentDidUpdate() {
     this.map.clearOverlays()
     this._drawIcons()
+    
+    console.log('111111111111111111111111111111111111111111')
+    console.log(this.props)
   }
   /**
    * 根据props.coordinate画图标
    */
   _drawIcons () {
     let pt
+    let ct = new BMap.Convertor()
     if (!this.props.coordinate) {
       return
-    } 
+    }
+    // this._transPos()
     this.corArr = [] //置空
     for (let i = 0; i < this.props.coordinate.length; i++) {
       let coordinate = this.props.coordinate[i]
@@ -57,34 +64,38 @@ class Map extends Component {
       }
       this.currentCor.lat = coordinate.latitude
       this.currentCor.lng = coordinate.longitude
-      console.log(coordinate.latitude, coordinate.longitude)
-      let tmp = GPS.gcj_encrypt(coordinate.latitude, coordinate.longitude)
-      console.log('tmp:')
-      console.log(tmp)
-      let tmp2 = GPS.bd_encrypt(tmp.lat, tmp.lon)
-      coordinate.longitude = tmp2.lon
-      coordinate.latitude = tmp2.lat
-      console.log(coordinate)
+
       pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
-      this._addMarker(pt, this.map, iconUrl)
-      this.corArr.push(pt)
-    }
-    if (this.corArr.length > 0) {
-      this._drawRoute()
+      // 进行纠偏
+      ct.translate([pt], 1, 5, (res) => {
+        this._addMarker(res.points[0], this.map, iconUrl)
+        this.corArr.push(res.points[0])
+        if (this.corArr.length > 0 && this.corArr.length === this.props.coordinate.length) {
+          this._drawRoute()
+        }
+      })
+      // this._addMarker(pt, this.map, iconUrl)
+      // this.corArr.push(ct)
     }
   }
   /**
    * 根据坐标绘制路线，同时设定地图中心、缩放等
    */
   _drawRoute () {
-    // if (this.corArr && this.corArr.length > 1) {
-    //   let corArr = this.corArr.slice()
-    //   corArr.splice(1, corArr.length - 2)
-    //   this._searchRoute(this.corArr[0], this.corArr[corArr.length - 1], corArr, this.map, '#111')
-    // }
-    for (let i = 1; i < this.corArr.length; i++) {
-      this._searchRoute(this.corArr[i - 1], this.corArr[i], this.map, '#111')
+    // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    // console.log(this.corArr.length)
+    // console.log(this.props.coordinate.length)
+    // console.log(this.corArr)
+    if (this.corArr && this.corArr.length > 1) {
+      let corArr = this.corArr.slice()
+      corArr = corArr.slice(1, corArr.length - 1)
+      // console.log(corArr)
+      this._searchRoute(this.corArr[0], this.corArr[this.corArr.length - 1], corArr, this.map, '#111')
     }
+    // 单个搜索
+    // for (let i = 1; i < this.corArr.length; i++) {
+    //   this._searchRoute(this.corArr[i - 1], this.corArr[i], this.map, '#111')
+    // }
   }
   /**
    * 坐标如果是0,0，暂定为无效
@@ -115,12 +126,15 @@ class Map extends Component {
    * @param {String} iconUrl
    */
   _addMarker(point, map, iconUrl) {
+    console.log(point)
     let icon = new BMap.Icon(`${iconUrl}`, new BMap.Size(30, 30), {
-      imageSize: BMap.Size(31, 31)
+      imageSize: BMap.Size(30, 30),
+      // imageOffset: new BMap.Size(0, -15)
     })
     var marker = new BMap.Marker(point, {
       icon: icon
     })
+    marker.setOffset(new BMap.Size(0, -15))
     map.addOverlay(marker)
   }
   /**
@@ -147,11 +161,15 @@ class Map extends Component {
   /**
    * 根据起始坐标，绘制路线
    * @param {Point} start 
-   * @param {Point} end 
+   * @param {Point} end
+   * @param {Array<Point>} 
    * @param {Map} map 
    * @param {String} strokeColor RGB
    */
-  _searchRoute(start, end, map, strokeColor) {
+  _searchRoute(start, end, pass, map, strokeColor) {
+    console.log(pass)
+    console.log(start)
+    console.log(end)
     var drv = new BMap.DrivingRoute(map, {
       onSearchComplete: (res) => {
         if (drv.getStatus() === BMAP_STATUS_SUCCESS) {
@@ -170,7 +188,7 @@ class Map extends Component {
         }
       }
     })
-    drv.search(start, end)
+    drv.search(start, end, {waypoints: pass})
   }
   render() {
     return (

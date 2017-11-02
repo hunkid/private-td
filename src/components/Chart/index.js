@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import { notification } from 'antd'
+
 import loadIcon from '../../assets/icon/load.png'
 import unloadIcon from '../../assets/icon/unload.png'
 import closeIcon from '../../assets/icon/close.png'
 import openIcon from '../../assets/icon/open.png'
 import transportIcon from '../../assets/icon/transport.png'
 import powerOn from '../../assets/icon/powerOn.png'
+
 import 'echarts/lib/chart/line'
 
 import * as iconTypes from '../../constants/Icon'
@@ -14,23 +16,27 @@ import * as iconTypes from '../../constants/Icon'
 let chooseIcon = {
   [iconTypes.CLOSE]: {
     src: closeIcon,
-    text: '已关闭'
+    text: '冰箱关盖子'
   },
   [iconTypes.OPEN]: {
     src: openIcon,
-    text: '已打开'
+    text: '冰箱开盖子'
   },
   [iconTypes.LOAD]: {
     src: loadIcon,
-    text: '已装载血液'
+    text: '放入血包'
   },
   [iconTypes.UNLOAD]: {
     src: unloadIcon,
-    text: '已卸载血液'
+    text: '取出血包'
   },
-  [iconTypes.OPEN]: {
+  [iconTypes.TRANSPORT]: {
     src: transportIcon,
-    text: '在运输途中'
+    text: '运输中'
+  },
+  [iconTypes.POWERON]: {
+    src: powerOn,
+    text: '冰箱开机'
   }
 }
 // 引入柱状图
@@ -58,8 +64,8 @@ class Chart extends Component {
     this._loadData()
   }
   componentDidUpdate () {
-    console.log('aaa')
-    console.log(this.props.data)
+    // console.log('aaa')
+    // console.log(this.props.data)
     this._loadData()
   }
   _loadData () {
@@ -72,7 +78,7 @@ class Chart extends Component {
         this.timeArr.push(da.time)
       })
     }
-    console.log(this.timeArr)
+    // console.log(this.timeArr)
     this._drawChart()
   }
   _initChart () {
@@ -83,12 +89,12 @@ class Chart extends Component {
       let cmd = this.props.data[params.dataIndex].command
       let src = chooseIcon[cmd]['src']
       let text = chooseIcon[cmd]['text']
-      console.log(this.props.data[params.dataIndex])
+      // console.log(this.props.data[params.dataIndex])
       notification.open({
         message: text,
         icon: <img src={src} alt="icon" style={{width: '30px', height: '30px'}}/>,
         duration: 1.5,
-        placement: 'rightBottm'
+        placement: 'topRight'
       })
     })
   }
@@ -157,9 +163,9 @@ class Chart extends Component {
         }
       }]
     }
-    console.log('这里')
-    console.log(this.timeArr)
-    console.log(this.temperatureArr)
+    // console.log('这里')
+    // console.log(this.timeArr)
+    // console.log(this.temperatureArr)
     
     this.chart.setOption(opt)
     // console.log(this.temperatureArr)
@@ -169,7 +175,7 @@ class Chart extends Component {
 
   render () {
     return (
-      <div id="ct-container" style={{'minWidth': "800px", 'height':"400px"}}></div>
+      <div id="ct-container" style={{'width': "100%", 'height':"500px", 'marginTop': "25px"}}></div>
     )
   }
 }

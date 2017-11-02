@@ -43,11 +43,13 @@ class MapContainer extends Component {
       null
     // console.log(data)
     return (
-      <div className="map-container">
-        <DatePicker defaultValue={moment(dateNow)} format='YYYY-MM-DD' size="large"
-          allowClear={false} placeholder="按日期查询"
-          className="dt-picker" onChange={this._handleDtChange} onOk={this._handleDtChange}/>
-        <Map coordinate={ data } className="clearfix"/>
+      <div className="content-container">
+        <div className="map-container">
+          <DatePicker defaultValue={moment(dateNow)} format='YYYY-MM-DD' size="large"
+            allowClear={false} placeholder="按日期查询"
+            className="dt-picker" onChange={this._handleDtChange} onOk={this._handleDtChange}/>
+          <Map coordinate={ data } className="clearfix"/>
+        </div>
         <Chart data={ data }/>
       </div>
     )
