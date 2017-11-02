@@ -2,9 +2,42 @@ import React, {
   Component
 } from 'react'
 import PropTypes from 'prop-types'
-import iconUrl from '../../assets/img/bus.png'
-import {GPS} from '../../util/transPos'
+// import iconUrl from '../../assets/img/bus.png'
+import loadIcon from '../../assets/icon/load.png'
+import unloadIcon from '../../assets/icon/unload.png'
+import closeIcon from '../../assets/icon/close.png'
+import openIcon from '../../assets/icon/open.png'
+import transportIcon from '../../assets/icon/transport.png'
+import powerOn from '../../assets/icon/powerOn.png'
+import * as iconTypes from '../../constants/Icon'
 
+
+let chooseIcon = {
+  [iconTypes.CLOSE]: {
+    src: closeIcon,
+    text: '冰箱关盖子'
+  },
+  [iconTypes.OPEN]: {
+    src: openIcon,
+    text: '冰箱开盖子'
+  },
+  [iconTypes.LOAD]: {
+    src: loadIcon,
+    text: '放入血包'
+  },
+  [iconTypes.UNLOAD]: {
+    src: unloadIcon,
+    text: '取出血包'
+  },
+  [iconTypes.TRANSPORT]: {
+    src: transportIcon,
+    text: '运输中'
+  },
+  [iconTypes.POWERON]: {
+    src: powerOn,
+    text: '冰箱开机'
+  }
+}
 var BMap = window.BMap
 const BMAP_STATUS_SUCCESS = window.BMAP_STATUS_SUCCESS
 // const BMAP_ANCHOR_TOP_LEFT = window.BMAP_ANCHOR_TOP_LEFT
@@ -20,7 +53,8 @@ class Map extends Component {
     this._drawIcons = this._drawIcons.bind(this)
     this._isInvalid = this._isInvalid.bind(this)
     this._drawRoute = this._drawRoute.bind(this)
-    // this._transPos = this._transPos.bind(this)
+    this._accuRouteCB = this._accuRouteCB.bind(this)
+    this.cmdArr = []
     this.map = null
     this.currentCor = {
       lng: 0,
@@ -41,12 +75,11 @@ class Map extends Component {
     this._drawIcons()
     
     console.log('111111111111111111111111111111111111111111')
-    console.log(this.props)
   }
   /**
    * 根据props.coordinate画图标
    */
-  _drawIcons () {
+  _drawIcons() {
     let pt
     let ct = new BMap.Convertor()
     if (!this.props.coordinate) {
@@ -54,6 +87,10 @@ class Map extends Component {
     }
     // this._transPos()
     this.corArr = [] //置空
+    let count = 0
+    let corArrPiece = []
+    this.cmdArr = []
+    console.log(this.props.coordinate)
     for (let i = 0; i < this.props.coordinate.length; i++) {
       let coordinate = this.props.coordinate[i]
       if(this._isInvalid(coordinate) || 
@@ -62,20 +99,45 @@ class Map extends Component {
         ) {
         continue
       }
+      pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
+      count++
+      corArrPiece.push(pt)
+      this.cmdArr.push(coordinate.command)
+      if (count === 9 || i === this.props.coordinate.length - 1) {
+        ct.translate(corArrPiece, 1, 5, (res) => {
+          this._accuRouteCB(res)
+        })
+        count = 0
+        corArrPiece = []
+      }
       this.currentCor.lat = coordinate.latitude
       this.currentCor.lng = coordinate.longitude
-
-      pt = new BMap.Point(+coordinate.longitude, +coordinate.latitude)
       // 进行纠偏
-      ct.translate([pt], 1, 5, (res) => {
-        this._addMarker(res.points[0], this.map, iconUrl)
-        this.corArr.push(res.points[0])
-        if (this.corArr.length > 0 && this.corArr.length === this.props.coordinate.length) {
-          this._drawRoute()
-        }
-      })
+      // ct.translate([pt], 1, 5, (res) => {
+      //   this._addMarker(res.points[0], this.map, iconUrl)
+      //   this.corArr.push(res.points[0])
+      //   if (this.corArr.length > 0 && this.corArr.length === this.props.coordinate.length) {
+      //     this._drawRoute()
+      //   }
+      // })
       // this._addMarker(pt, this.map, iconUrl)
       // this.corArr.push(ct)
+    }
+  }
+  _accuRouteCB (res) {
+    console.log('花了')
+    console.log(this.cmdArr)
+    
+    res.points.forEach((pt, i) => {
+      let cmd = this.cmdArr[i]
+      if (cmd !== iconTypes.TRANSPORT) {
+        let iconUrl = chooseIcon[cmd].src
+        this._addMarker(pt, this.map, iconUrl)
+      }
+      this.corArr.push(pt)
+    })
+    if (this.corArr.length > 0 && this.corArr.length === this.props.coordinate.length) {
+      this._drawRoute()
     }
   }
   /**
