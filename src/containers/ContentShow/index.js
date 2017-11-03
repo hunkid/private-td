@@ -41,7 +41,6 @@ class MapContainer extends Component {
     let data = this.props.history[activeId] ? 
       this.props.history[activeId][currentDay] :
       null
-    // console.log(data)
     return (
       <div className="content-container">
         <div className="map-container">
