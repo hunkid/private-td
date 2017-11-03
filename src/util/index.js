@@ -25,15 +25,21 @@ export function formDate(num) {
  */
 export function formTime(num) {
   let date = new Date(num)
-  let hour = date.getHours(); //获取当前小时数(0-23)
-  let minu = date.getMinutes(); //获取当前分钟数(0-59)
-  let sec = date.getSeconds(); //获取当前秒数(0-59)
+  let hour = date.getHours() //获取当前小时数(0-23)
+  let minu = date.getMinutes() //获取当前分钟数(0-59)
+  if (minu < 10) {
+    minu = '0' + minu
+  }
+  if (hour < 10) {
+    hour = '0' + hour
+  }
+  let sec = date.getSeconds() //获取当前秒数(0-59)
   return `${hour}:${minu}:${sec}`
 }
 
 /**
  * 坐标如果是0,0，暂定为无效
- * @param {Object} coordinate 
+ * @param {Object} coordinate
  */
 export function isCoordInvalid(coordinate) {
   if ((+coordinate.latitude - 0) < Number.EPSILON &&

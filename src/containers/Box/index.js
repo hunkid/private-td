@@ -13,6 +13,11 @@ class BoxContainer extends Component {
     this._returnChoseBoxToken = this._returnChoseBoxToken.bind(this)
     this._getBoxHistory = this._getBoxHistory.bind(this)
   }
+  componentWillMount () {
+    if (this.props.id === 1) {
+      this._handleClick(1)
+    }
+  }
   // 处理点击
   _handleClick (id) {
     store.dispatch(changeActiveBox(id))
@@ -49,6 +54,12 @@ class BoxContainer extends Component {
       <Box {...this.props} onClick={this._handleClick}/>
     )
   }
+}
+
+BoxContainer.propTypes = {
+  func: PropTypes.string,
+  id: PropTypes.number,
+  isActive: PropTypes.bool
 }
 
 export default BoxContainer

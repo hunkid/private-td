@@ -3,9 +3,7 @@ import PropTypes from 'prop-types'
 // import Box from '../../components/Box'
 import Box from '../Box'
 import './boxList.css'
-// import axios from 'axios'
 
-// import {BASEURL} from '../../constants/Config'
 import {connect} from 'react-redux'
 
 class BoxList extends Component {
@@ -13,21 +11,6 @@ class BoxList extends Component {
     super(props)
     this.state = {
       boxes: []
-    }
-    // this._handleClick = this._handleClick.bind(this)
-  }
-  componentWillMount () {
-    // 查询所有box
-  }
-  componentDidMount () {
-    // axios.get(`${BASEURL}/bbox/box`)
-    //   .then(function (res) {
-    //     console.log(res)
-    //   })
-  }
-  _handleBoxes (data) {
-    if (data) {
-
     }
   }
   render () {
