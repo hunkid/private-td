@@ -9,7 +9,7 @@ import openIcon from '../../assets/icon/open.png'
 import transportIcon from '../../assets/icon/transport.png'
 import powerOn from '../../assets/icon/powerOn.png'
 import * as iconTypes from '../../constants/Icon'
-import {isCoordInvalid} from '../../util'
+import {isCoordInvalid, judgeUrlForDraw} from '../../util'
 
 let chooseIcon = {
   [iconTypes.CLOSE]: {
@@ -163,7 +163,7 @@ class Map extends Component {
     transPosAndDraw(ct, this.props.coordinate, this.cmdArr, this.temperArr, this.stepArr, this.timeArr, this._accuRouteCB)
   }
   /**
-   * 纠偏后的回调
+   * 纠偏后的回调：画icon和画线（包括直线、路线）
    * @param {Object} res
    * @param {Bool} flag 采取画图方式： FLAG_LINE:画直线，FLAG_ROUTE:画路线 
    * @param {Number} invalidCount this.props.coordinate无效数据数目
@@ -192,6 +192,11 @@ class Map extends Component {
     })
     // console.log(this.corArr)
     // console.log(this.props.coordinate)
+    if(!judgeUrlForDraw(window.location)) {
+      // 如果不画线，直接整合地图
+      this._setMap()
+      return
+    }
     if (this.corArr.length > 0 && this.corArr.length === this.props.coordinate.length - invalidCount) {
       switch (flag) {
         case FLAG_LINE:
@@ -281,7 +286,6 @@ class Map extends Component {
     map.addOverlay(marker)
   }
   _handleMarkerPos (e) {
-    console.log(e)
     console.log(e.target.step)
     console.log(e.target.temp)
     message.info(`运输id:${e.target.step}，温度：${e.target.temp}，时间：${e.target.time}`)

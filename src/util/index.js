@@ -47,3 +47,20 @@ export function isCoordInvalid(coordinate) {
     return true
   }
 }
+
+/**
+ * 根据location样式返回
+ * @param {object} location
+ * @return {Bool} true:画线，false:不画 
+ */
+export function judgeUrlForDraw(location) {
+  let params = location.search.substr(1).split('&')
+  let last = params.length > 0 ? params[params.length - 1] : ''
+  if (params.length && last.indexOf('line') !== -1) {
+    if(last.split('line=')[1] === 'false') {
+      return false
+    }
+  }
+  return true
+}
+
